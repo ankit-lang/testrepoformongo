@@ -3,10 +3,12 @@ from pymongo import MongoClient
 from datetime import datetime
 import random
 
+uri = f"mongodb+srv://rankit2883:rankit2883@jobportal.vrbvj8m.mongodb.net/jobportal?retryWrites=true&w=majority&appName=jobportal"
+
 app = Flask(__name__)
 
 # MongoDB connection
-client = MongoClient('mongodb+srv://rankit2883:rankit2883@jobportal.vrbvj8m.mongodb.net/')
+client = MongoClient(uri)
 db = client['data_collection']
 collection = db['entries']
 
