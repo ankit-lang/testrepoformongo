@@ -120,8 +120,30 @@
             line-height: 1.6;
             max-height: 600px;
             overflow-y: auto;
+            overflow-x: auto;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
             border: 1px solid #00ff00;
+        }
+        /* custom scrollbar for sandbox */
+        .terminal-sandbox::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .terminal-sandbox::-webkit-scrollbar-track {
+            background: #0e0e0e;
+            border-radius: 4px;
+        }
+        .terminal-sandbox::-webkit-scrollbar-thumb {
+            background: #00ff00;
+            border-radius: 4px;
+        }
+        .terminal-sandbox::-webkit-scrollbar-thumb:hover {
+            background: #55ff55;
+        }
+        /* firefox scrollbars */
+        .terminal-sandbox {
+            scrollbar-width: thin;
+            scrollbar-color: #00ff00 #0e0e0e;
         }
         .terminal-header {
             color: #00ff00;
@@ -135,6 +157,7 @@
             justify-content: space-between;
             padding: 5px 10px;
             border-bottom: 1px solid #333;
+            white-space: nowrap; /* prevent wrapping so scrollbar appears when content is wide */
         }
         .terminal-row:hover {
             background-color: #2d2d2d;
@@ -147,9 +170,13 @@
         .pagination {
             margin-top: 20px;
             display: flex;
-            justify-content: center;
+            justify-content: flex-start; /* align items to left for easier scrolling */
             gap: 10px;
             align-items: center;
+            flex-wrap: nowrap; /* keep everything on one line */
+            overflow-x: auto; /* enable horizontal scrolling if too wide */
+            padding: 5px 0;
+            -webkit-overflow-scrolling: touch;
         }
         .pagination a, .pagination span {
             padding: 8px 12px;
@@ -158,6 +185,8 @@
             text-decoration: none;
             color: #333;
             background-color: white;
+            white-space: nowrap; /* prevent individual items from breaking */
+            flex: 0 0 auto; /* prevent flex items from shrinking/growing */
         }
         .pagination a:hover {
             background-color: #4CAF50;
@@ -211,24 +240,55 @@
                 $ Database Entry Viewer [Page {{ current_page }}/{{ total_pages }}]
             </div>
             {% if table_data %}
+            <!--    print(f"The student named {names} from the {depts} department, roll number {rollnum}, section {section}, has an attendance of {attendance}%.")
+    -->
                 <div class="terminal-row" style="font-weight: bold; background-color: #2d2d2d;">
                     <div style="flex: 0.5;">ID</div>
                     <div style="flex: 1.5;">Name</div>
-                    <div style="flex: 2;">Email</div>
-                    <div style="flex: 1;">Value</div>
-                    <div style="flex: 1;">Status</div>
+                    <div style="flex: 2;">Department</div>
+                    <div style="flex: 1;">Roll Number</div>
+                     <div style="flex: 1;">Section</div>
+                   
+                    <div style="flex: 1;">Attendance</div>
                 </div>
                 {% for row in table_data %}
                 <div class="terminal-row">
                     <div style="flex: 0.5;">{{ row.id }}</div>
                     <div style="flex: 1.5;">{{ row.name }}</div>
-                    <div style="flex: 2;">{{ row.email }}</div>
-                    <div style="flex: 1;">{{ row.value }}</div>
-                    <div style="flex: 1;">{{ row.status }}</div>
+                    <div style="flex: 2;">{{ row.dept }}</div>
+                    <div style="flex: 1;">{{ row.roll_number }}</div>
+                    <div style="flex: 1;">{{ row.section }}</div>
+                    <div style="flex: 1;">{{ row.attendance }}%</div>
                 </div>
                 {% endfor %}
                 <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #00ff00; color: #00ff00;">
                     → Showing {{ table_data|length }} records | Total: {{ num_rows }} rows
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Parallel Query Sandbox -->
+        <div class="terminal-sandbox" style="margin-top: 20px; background-color: #111;">
+            <div class="terminal-header">
+                $ Parallel Query Tracker
+            </div>
+            {% if query_status_list %}
+                <div class="terminal-row" style="font-weight: bold; background-color: #222;">
+                    <div style="flex: 1;">Query</div>
+                    <div style="flex: 1;">Status</div>
+                </div>
+                {% for q in query_status_list %}
+                <div class="terminal-row">
+                    <div style="flex: 1;">{{ q.query }}</div>
+                    <div style="flex: 1;">{{ q.status }}</div>
+                </div>
+                {% endfor %}
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #00ff00; color: #00ff00;">
+                    → Total queries: {{ query_status_list|length }}
+                </div>
+            {% else %}
+                <div class="terminal-row">
+                    No parallel query information available.
                 </div>
             {% endif %}
         </div>
